@@ -6,7 +6,7 @@ ENCODER, DECODER = make_serializers()
 
 class Configuration(models.Model):
     key = models.CharField(max_length=50)
-    site = models.ForeignKey(Site)
+    site = models.ForeignKey(Site, blank=True, null=True)
     _data = models.TextField(db_column='data')
     
     def get_data(self):
@@ -28,7 +28,10 @@ class Configuration(models.Model):
             return self.key
 
     def __unicode__(self):
-        return '%s: %s' % (self.key, self.site)
-
+        if self.site:
+            return '%s (%s)' % (self.name, self.site)
+        else:
+            return '%s (Default)' % self.name
+            
     class Meta:
         unique_together = [('key', 'site')]

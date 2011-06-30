@@ -25,8 +25,12 @@ class ConfigurationInstance(object):
         #CONSIDER should we plug in caching here?
         try:
             configuration = Configuration.objects.get(key=self.key, site=Site.objects.get_current())
-        except Configuration.DoesNotExist:
-            return {}
+        except Configuration.DoesNotExist:            
+            try:
+                configuration = Configuration.objects.get(key=self.key, site__isnull=True)
+                return configuration.data
+            except Configuration.DoesNotExist:
+                return {}
         else:
             return configuration.data
 
